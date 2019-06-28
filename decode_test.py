@@ -72,7 +72,9 @@ while index<lengths-2:
     case_str+=" when "+value+"="+worls[index-1] +" then "+ worls[index]
     
 if lengths%2==0:
+    #最后一个为默认值
     case_str+="else "  +  worls[-1]+" end "+alias
 else:
+    #没有默认值返回长度为零的字符串
     case_str+="else "  + "''"+" end "+alias
 print(case_str)
