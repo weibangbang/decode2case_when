@@ -9,6 +9,7 @@ def tail_handle(str):
     
     str_rever=''.join(str_list)
     index=str_rever.find(")")
+    #用“#”号占个位置 分割decode 内外部元素
     str_rever_replace=str_rever[0:index]+"#"+str_rever[index+1:]
     str_rever_replace_list=list(str_rever_replace)
     str_rever_replace_list.reverse()
@@ -19,7 +20,7 @@ stack = []
 #用数组保存decode内部元素
 worls = []
 
-#测试用例
+#测试例子
 #b_str="decode(name,'Tom',cast(cast('0' as int) as varchar),'Anna',conact(conact(a,b),conact(a,b)),'mid',b,c,d,eeee,colles(cast(cast('0' as int) as varchar),''),'lala')  as   name"
 b_str="decode(name,'Tom',cast(cast('0' as int) as varchar),'Anna',conact(conact(a,b),conact(a,b)),'mid',b,c,d,eeee,colles(cast(cast('0' as int) as varchar),''),'lala') "
 #b_str="name,'Tom',cast(cast('0' as int) as varchar),'Anna',conact(a,b),'mid',b,c,d,eeeee"
@@ -30,12 +31,13 @@ list(b_str)
 st=''
 #主要处理逻辑   拆散decode内部元素，放入数组中
 for x in b_str:
-    #stack.append(x)
-    #print(x)
+    #遇到左括号入栈
     if x=='(':
         stack.append(x)
+    #遇到右括号出栈
     elif  x==')':
         stack.pop()
+    #遇到逗号，并且栈内元素为1，就判定 st 保存了decode内部一个完整元素的信息
     elif  x == ',' and len(stack)==1:
         worls.append(st)
         st=''
@@ -43,28 +45,29 @@ for x in b_str:
     st+=x
 worls.append(st)   
 
-#处理头元素括号后覆盖数组中的旧的头元素
+#调用处理头元素括号后覆盖数组中的旧的头元素
 heald=head_handle(worls[0])
 worls[0]=heald
 
-#处理尾元素括号后覆盖数组中的旧的尾元素
+#调用处理尾元素括号后覆盖数组中的旧的尾元素，如果有别名则做对应处理
 tail=tail_handle(worls[-1])
+#判断是否有别名
 alias=''
-if "as" in tail:
+if "#" in tail:
     worls[-1]=tail.split("#")[0]
     alias=tail.split("#")[1]
 
 
 lengths=len(worls)
-print("lengths:"+str(lengths))
+#开始拼接 case when 语句
 value=worls[0]
 case_str='case '
 
     
 index=0
 while index<lengths-2:
-
     index+=2
     case_str+=" when "+value+"="+worls[index-1] +" then "+ worls[index]
 case_str+="else "  +  worls[-1]+" end "+alias
+#打印查看结果
 print(case_str)
