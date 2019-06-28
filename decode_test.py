@@ -22,9 +22,10 @@ worls = []
 
 #测试例子
 #b_str="decode(name,'Tom',cast(cast('0' as int) as varchar),'Anna',conact(conact(a,b),conact(a,b)),'mid',b,c,d,eeee,colles(cast(cast('0' as int) as varchar),''),'lala')  as   name"
-b_str="decode(name,'Tom',cast(cast('0' as int) as varchar),'Anna',conact(conact(a,b),conact(a,b)),'mid',b,c,d,eeee,colles(cast(cast('0' as int) as varchar),''),'lala') "
+#b_str="decode(name,'Tom',cast(cast('0' as int) as varchar),'Anna',conact(conact(a,b),conact(a,b)),'mid',b,c,d,eeee,colles(cast(cast('0' as int) as varchar),''),'lala') "
 #b_str="name,'Tom',cast(cast('0' as int) as varchar),'Anna',conact(a,b),'mid',b,c,d,eeeee"
-
+#b_str="decode(cols,1,'male',0,'female')"
+b_str="decode(cols,1,'male',0,'female','unkown')"
 #把字符串拆分成字符
 list(b_str)
 
@@ -59,15 +60,19 @@ if "#" in tail:
 
 
 lengths=len(worls)
-#开始拼接 case when 语句
+
 value=worls[0]
 case_str='case '
 
     
 index=0
 while index<lengths-2:
+
     index+=2
     case_str+=" when "+value+"="+worls[index-1] +" then "+ worls[index]
-case_str+="else "  +  worls[-1]+" end "+alias
-#打印查看结果
+    
+if lengths%2==0:
+    case_str+="else "  +  worls[-1]+" end "+alias
+else:
+    case_str+="else "  + "''"+" end "+alias
 print(case_str)
